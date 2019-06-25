@@ -6,13 +6,13 @@ const projects = [
   {
     id: "1",
     title: "Project 1",
-    tasks: ['New task'],
+    tasks: ["New task"]
   },
   {
     id: "2",
     title: "Project 2",
-    tasks: ['Another task'],
-  },
+    tasks: ["Another task"]
+  }
 ];
 
 let requests = 0;
@@ -22,7 +22,7 @@ function checkProjectInArray(req, res, next) {
   const project = projects.find(p => p.id == id);
 
   if (!project) {
-    return res.status(400).json({ error: "Project does not exist"});
+    return res.status(400).json({ error: "Project does not exist" });
   }
 
   return next();
@@ -42,7 +42,7 @@ server.get("/projects", (req, res) => {
 });
 
 /* GET ALL PROJECTS */
-server.get("/projects/:id",  checkProjectInArray, (req, res) => {
+server.get("/projects/:id", checkProjectInArray, (req, res) => {
   const { id } = req.params;
   const project = projects.find(p => p.id === id);
   return res.json(project);
@@ -51,9 +51,9 @@ server.get("/projects/:id",  checkProjectInArray, (req, res) => {
 /* POST A PROJECT */
 server.post("/projects", (req, res) => {
   const { id, title } = req.body;
-  const project = { id , title, tasks: [] }
-  projects.push(project)
-  return res.json(project)
+  const project = { id, title, tasks: [] };
+  projects.push(project);
+  return res.json(project);
 });
 
 /* ADD TASK TO PROJECT */
@@ -64,7 +64,7 @@ server.post("/projects/:id/tasks", checkProjectInArray, (req, res) => {
   const project = projects.find(p => p.id === id);
   project.tasks.push(title);
 
-  return res.json(project)
+  return res.json(project);
 });
 
 /* EDIT PROJECT TITLE */
