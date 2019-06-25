@@ -2,63 +2,90 @@ const express = require("express");
 const server = express();
 server.use(express.json());
 
-let projects = [
+const projects = [
   {
-    id: 1,
+    id: "1",
     title: "Project 1",
     tasks: ['New task'],
   },
   {
-    id: 2,
+    id: "2",
     title: "Project 2",
     tasks: ['Another task'],
   },
 ];
 
+let requests = 0;
+
 function checkProjectInArray(req, res, next) {
-  const project = projects[req.params.index];
+  const { id } = req.params;
+  const project = projects.find(p => p.id == id);
 
-  if (!project)
+  if (!project) {
     return res.status(400).json({ error: "Project does not exist"});
+  }
 
-  req.project = project;
-  console.log(project)
   return next();
 }
 
+function countRequests(req, res, next) {
+  requests++;
+  console.log(`Number of requests: ${requests}`);
+  return next();
+}
+
+server.use(countRequests);
+
+/* GET SINGLE PROJECT */
 server.get("/projects", (req, res) => {
   return res.json(projects);
 });
 
-server.get("/projects/:id",  (req, res) => {
+/* GET ALL PROJECTS */
+server.get("/projects/:id",  checkProjectInArray, (req, res) => {
   const { id } = req.params;
-  return res.json(projects.filter(project => project.id == id));
+  const project = projects.find(p => p.id === id);
+  return res.json(project);
 });
 
+/* POST A PROJECT */
 server.post("/projects", (req, res) => {
-  const { id, title, tasks } = req.body;
-  projects.push({ id , title, tasks })
-  return res.json(projects)
+  const { id, title } = req.body;
+  const project = { id , title, tasks: [] }
+  projects.push(project)
+  return res.json(project)
 });
 
+/* ADD TASK TO PROJECT */
 server.post("/projects/:id/tasks", checkProjectInArray, (req, res) => {
-  const { tasks } = req.body;
-  console.log(tasks);
-  return res.json(project.tasks)
-})
+  const { id } = req.params;
+  const { title } = req.body;
 
-server.put("/projects/:index", checkProjectInArray, (req, res) => {
-  const { index } = req.params;
-  const { id, title, tasks } = req.body;
-  projects[index] = { id, title, tasks};
+  const project = projects.find(p => p.id === id);
+  project.tasks.push(title);
 
-  return res.json(projects);
+  return res.json(project)
 });
 
-server.delete("/projects/:id",  (req, res) => {
+/* EDIT PROJECT TITLE */
+server.put("/projects/:id", checkProjectInArray, (req, res) => {
   const { id } = req.params;
-  projects = projects.filter(project => project.id != id);
+  const { title } = req.body;
+  const project = projects.find(p => p.id === id);
+
+  project.title = title;
+
+  return res.json(project);
+});
+
+/* DELETE PROJECT */
+server.delete("/projects/:id", checkProjectInArray, (req, res) => {
+  const { id } = req.params;
+  const projectIndex = projects.find(p => p.id === id);
+
+  projects.splice(projectIndex, 1);
+
   return res.send();
-})
+});
 
 server.listen(3000);
