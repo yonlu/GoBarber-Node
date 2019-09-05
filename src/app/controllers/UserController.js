@@ -3,6 +3,14 @@ import User from '../models/User';
 import File from '../models/File';
 
 class UserController {
+  async index(req, res) {
+    const users = await User.findAll({
+      attributes: ['id', 'name', 'email', 'avatar_id'],
+    });
+
+    return res.json(users);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
