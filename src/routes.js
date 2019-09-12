@@ -23,18 +23,23 @@ routes.use(authMiddleware);
 routes.get('/users', authMiddleware, UserController.index);
 routes.put('/users', authMiddleware, UserController.update);
 
+// Provider's routes
 routes.get('/providers', ProviderController.index);
 routes.get('/providers/:providerId/available', AvailableController.index);
 
+// Appointment's routes
 routes.get('/appointments', AppointmentController.index);
 routes.post('/appointments', AppointmentController.store);
 routes.delete('/appointments/:id', AppointmentController.delete);
 
+// Schedule's route
 routes.get('/schedule', ScheduleController.index);
 
+// Notification's routes
 routes.get('/notifications', NotificationController.index);
 routes.put('/notifications/:id', NotificationController.update);
 
+// File upload's route
 routes.post('/files', upload.single('file'), FileController.store);
 
 export default routes;
