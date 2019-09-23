@@ -100,7 +100,7 @@ class AppointmentController {
     const formattedDate = format(hourStart, "MMMM dd',' H:mm");
 
     await Notification.create({
-      content: `New appointment for ${user.name} at ${formattedDate}`,
+      content: `New appointment for ${user.name} on ${formattedDate}`,
       user: provider_id,
     });
 
